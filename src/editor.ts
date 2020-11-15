@@ -38,8 +38,8 @@ class EditorElement {
     // 이벤트 리스너
     this.suffix.onkeyup = (evt) => {
       // 개행문자 방지용
-      this.innerText = this.suffix.value = this.suffix.value.replace(/\n/g, '');
-      this.innerText = this.suffix.value = this.suffix.value.trimLeft();
+      this.suffix.value = this.suffix.value.replace(/\n/g, '');
+      this.innerText = this.suffix.value = this.trimSentinel(this.suffix.value);
 
       // 아무것도 없는데 백스페이스를 누르면 삭제한다.
       if (this.suffix.value === '' && evt.key === 'Backspace' && this.prev) {
@@ -109,6 +109,16 @@ class EditorElement {
     }
     
     this.suffix.style.fontWeight = this.type === 'attr' ? 'normal' : 'bold';
+  }
+
+  // #으로 시작하거나 -로 시작하는 문자열을 파서 에러가 나지 않게
+  // 해당 문자를 없앤다. (ex: #123# -> 123#)
+  private trimSentinel(s: string): string {
+    s = s.trimLeft();
+    if (s.charAt(0) === '#' || s.charAt(0) === '-') {
+      s = s.slice(1, s.length - 1);
+    }
+    return s;
   }
 }
 

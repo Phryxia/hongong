@@ -113,6 +113,7 @@ export class BrowserTreeController {
       if (!name)
         return;
       name = name.trim();
+      name = this.trimSentinel(name);
       if (!name)
         return;
 
@@ -129,6 +130,7 @@ export class BrowserTreeController {
       if (!name)
         return;
       name = name.trim();
+      name = this.trimSentinel(name);
       if (!name)
         return;
 
@@ -158,6 +160,19 @@ export class BrowserTreeController {
       this.dc.save();
       this.view.update();
     };
+  }
+
+  // #으로 시작하거나 -로 시작하는 문자열을 파서 에러가 나지 않게
+  // 해당 문자가 포함되면 null을 반환한다.
+  // editor.js의 trimSentinel과 비슷한 함수이지만 동작하는게
+  // 완전히 다르므로 주의바람.
+  private trimSentinel(s: string): string {
+    s = s.trimLeft();
+    if (s.charAt(0) === '#' || s.charAt(0) === '-') {
+      alert('제목은 #나 -로 시작할 수 없습니다.');
+      return null;
+    }
+    return s;
   }
 
   public onBooting(): void {
