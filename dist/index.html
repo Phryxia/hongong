@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang='ko'>
+  <head>
+    <title>혼공의 정석 ver α</title>
+    <link rel='stylesheet' href='style.css'>
+  </head>
+  <body>
+    <h1>혼공의 정석 ver α</h1>
+
+    <!-- 브라우저 -->
+    <fieldset>
+      <legend>BROWSER</legend>
+      <!-- 브라우저 상단 버튼들 -->
+      <div>
+        <input type='button' value='새 폴더' id='bt-create-folder' />
+        <input type='button' value='새 노트' id='bt-create-note' />
+        <input type='button' value='문제풀기' id='bt-problem-solving' />
+        <input type='button' value='삭제' id='bt-delete-current' />
+      </div>
+
+      <!-- 브라우저 트리 -->
+      <div id='browser-tree'>
+      </div>
+
+      <!-- 검색 -->
+      <!-- <span>검색:</span>
+      <input type='text' id='search-keyword' /> -->
+    </fieldset>
+    
+    <!-- 편집기 -->
+    <fieldset id='editor-window'>
+      <legend>EDITOR</legend>
+      <div>
+        <input type='button' value='소제목1' id='bt-head-1' />
+        <input type='button' value='소제목2' id='bt-head-2' />
+        <input type='button' value='소제목3' id='bt-head-3' />
+        <input type='button' value='소제목4' id='bt-head-4' />
+        <input type='button' value='내용' id='bt-attr' />
+      </div>
+      <div id='editor'></div>
+      <div>
+        <input type='button' value='저장' id='bt-save' />
+      </div>
+    </fieldset>
+
+    <!-- 문제풀이 -->
+    <fieldset id='practice-window'>
+      <legend>PRACTICE</legend>
+      <div id='practice'></div>
+    </fieldset>
+    
+    <!-- 스크립트 -->
+    <script src='bundle.js'></script>
+  </body>
+</html>
