@@ -114,7 +114,7 @@ class PracticeView {
     // 답 적는 곳
     const blank = document.createElement('input');
     blank.type = 'text';
-    blank.id = `qudst-${qid}-blank`;
+    blank.id = `quest-${qid}-blank`;
     root.appendChild(blank);
 
     // 정답유무 창
@@ -156,15 +156,27 @@ class PracticeView {
     out.id = `quest-${qid}-answer`;
     return out;
   }
+
+  public updateAnswer(qid: number, content: string, color: string): void {
+    const answerDom = document.getElementById(`quest-${qid}-answer`);
+    answerDom.innerText = content;
+    answerDom.style.color = color;
+  }
 }
 
 export class PracticeController {
   private view: PracticeView = new PracticeView();
   private editor: EditorComponent;
+  private mocktest: Mocktest = null;
 
   public constructor(editorComponent: EditorComponent) {
     this.editor = editorComponent;
     this.view.deactivate();
+
+    // 채점버튼
+    document.getElementById('bt-check').onclick = () => {
+      this.check();
+    };
   }
 
   public createMocktest(): void {
@@ -174,9 +186,53 @@ export class PracticeController {
     
     const infotree = Parser.parse(markdown);
     
-    const mocktest = Mocktest.create_mocktest(infotree.roots[0], 16);
+    this.mocktest = Mocktest.create_mocktest(infotree.roots[0], 16);
 
-    this.view.mocktest = mocktest;
+    this.view.mocktest = this.mocktest;
     this.view.activate();
+  }
+
+  // 채점해서 뷰에 결과를 뷰로 발송한다.
+  public check(): void {
+    for (let qid = 1; qid <= this.mocktest.quests.length; ++qid) {
+      const quest = this.mocktest.quests[qid - 1];
+
+      // get response
+      let response = '';
+      if (quest.type === 'binary') {
+        if ((document.getElementById(`quest-${qid}-0`) as HTMLInputElement).checked)
+          response = 'T';
+        else if ((document.getElementById(`quest-${qid}-1`) as HTMLInputElement).checked)
+          response = 'F';
+      }
+      else if (quest.type === 'selection') {
+        for (let cid = 0; cid < 4; ++cid)
+          if ((document.getElementById(`quest-${qid}-${cid}`) as HTMLInputElement).checked)
+            response = `${cid}`;
+      }
+      else if (quest.type === 'short') {
+        response = (document.getElementById(`quest-${qid}-blank`) as HTMLInputElement).value;
+        response = response ? response : '';
+      }
+
+      if (Quest.evaluate(quest, [response])) {
+        this.view.updateAnswer(qid, '맞았습니다!', 'green');
+      }
+      else
+        this.view.updateAnswer(qid, `틀렸습니다. (정답: ${this.answerOf(quest)})`, 'red');
+    }
+  }
+
+  // view로 가야 맞는 거 같은데...
+  private answerOf(quest: Quest): string {
+    if (quest.type === 'binary') {
+      return quest.answers[0];
+    }
+    else if (quest.type === 'selection') {
+      return quest.answers.map((x: string) => '' + (Number(x) + 1)).join(' and ');
+    }
+    else if (quest.type === 'short') {
+      return quest.answers.join(' or ');
+    }
   }
 }
