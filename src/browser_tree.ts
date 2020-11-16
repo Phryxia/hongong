@@ -7,10 +7,40 @@ class BrowserTreeView {
   private dc: DataCenter;
   private editor: EditorComponent;
   private isOpen: Map <number, boolean> = new Map <number, boolean> ();
+  private isHighlighted: Map <number, boolean> = new Map <number, boolean> ();
+  
+  // 트리 검색 직전 사용자의 open/close 상태를 보존한다.
+  private isOpenLastState: [boolean, number][] = null;
 
   public constructor(dc: DataCenter, editor: EditorComponent) {
     this.dc = dc;
     this.editor = editor;
+
+    // 브라우저 검색창
+    document.getElementById('search-keyword').onkeyup = (ev: Event) => {
+      const keyword = (ev.target as HTMLInputElement).value;
+
+      if (keyword) {
+        // 처음으로 키워드가 변동되었을 때 백업을 뜬다.
+        if (!this.isOpenLastState) {
+          this.isOpenLastState = [];
+          this.isOpen.forEach((val, key) => {
+            this.isOpenLastState.push([val, key]);
+          });
+        }
+        
+        this.filter(keyword);
+      }
+      else {
+        // 이전 open 상태를 복원한다.
+        this.clearHighlight();
+        for (const [val, key] of this.isOpenLastState) {
+          this.isOpen.set(key, val);
+        }
+        this.isOpenLastState = null;
+      }
+      this.update();
+    };
   }
 
   public init(): void {
@@ -43,10 +73,20 @@ class BrowserTreeView {
     out.innerText = `${(node.isFolder ? '#' : '-')} ${node.name}`;
     
     // 색깔
-    if (node === this.dc.getCurrentNode())
-      out.style.color = 'red';
-    else
-      out.style.color = 'black';
+    if (this.isHighlighted.get(node.id)) {
+      if (node === this.dc.getCurrentNode())
+        out.style.color = 'yellow';
+      else
+        out.style.color = 'white';
+      out.style.backgroundColor = 'red';
+    }
+    else {
+      if (node === this.dc.getCurrentNode())
+        out.style.color = 'red';
+      else
+        out.style.color = 'black';
+      out.style.backgroundColor = 'white';
+    }
 
     // 이벤트 리스너 등록
     out.onclick = () => {
@@ -92,6 +132,32 @@ class BrowserTreeView {
 
   public close(node: FileSystemNode): void {
     this.isOpen.set(node.id, false);
+  }
+
+  // name을 포함하고 있는 모든 폴더 및 파일을 open상태로 만든다.
+  private filter(name: string): void {
+    // 일단 다 지우고
+    this.clearOpen();
+    this.clearHighlight();
+    this.filterR(name, this.dc.getRootFolder());
+  }
+
+  private filterR(name: string, fsnode: FileSystemNode) {
+    if (fsnode.name.search(name) >= 0) {
+      this.open(fsnode);
+      this.isHighlighted.set(fsnode.id, true);
+    }
+    if (fsnode.isFolder)
+      for (const child of (fsnode as FolderNode).children)
+        this.filterR(name, child);
+  }
+
+  private clearOpen(): void {
+    this.isOpen.forEach((val, key) => this.isOpen.set(key, false));
+  }
+
+  private clearHighlight(): void {
+    this.isHighlighted.forEach((val, key) => this.isHighlighted.set(key, false));
   }
 }
 
