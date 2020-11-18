@@ -97,7 +97,9 @@ class EditorElement {
     this.prefix.style.display = this.type === 'attr' ? 'inline' : 'none';
 
     this.suffix.value = this.innerText;
+    this.suffix.className = `ee-${this.type}`;
     
+    /*
     switch(this.type) {
       case 'h1': this.suffix.style.fontSize = '32px'; break;
       case 'h2': this.suffix.style.fontSize = '28px'; break;
@@ -106,7 +108,7 @@ class EditorElement {
       case 'h5': this.suffix.style.fontSize = '16px'; break;
       case 'h6': this.suffix.style.fontSize = '14px'; break;
       case 'attr': this.suffix.style.fontSize = '12px'; break;
-    }
+    }*/
     
     this.suffix.style.fontWeight = this.type === 'attr' ? 'normal' : 'bold';
   }

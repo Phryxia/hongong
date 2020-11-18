@@ -1,3 +1,40 @@
 #editor input {
   border: none;
 }
+
+#editor-window > div {
+  padding-bottom: 10px;
+}
+
+#practice > div {
+  padding-bottom: 10px;
+}
+
+.ee-h1 {
+  font-size: 32px;
+  padding-top: 10px;
+}
+
+.ee-h2 {
+  font-size: 28px;
+  padding-top: 8px;
+}
+
+.ee-h3 {
+  font-size: 24px;
+  padding-top: 6px;
+}
+
+.ee-h4 {
+  font-size: 20px;
+  padding-top: 4px;
+}
+
+.ee-h5 {
+  font-size: 18px;
+  padding-top: 2px;
+}
+
+.ee-attr {
+  font-size: 16px;
+}
