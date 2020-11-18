@@ -288,7 +288,7 @@ export class EditorComponent {
           out += '- ' + element.data;
         else {
           // 최상단에 #을 하나 붙이기 위해서 나머지를 2단계부터 적용시킴
-          for (let i = 0; i <= Number(element.type.charAt(1)); ++i)
+          for (let i = 0; i < Number(element.type.charAt(1)); ++i)
             out += '#';
           out += ' ' + element.data;
         }
