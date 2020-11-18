@@ -206,9 +206,11 @@ export class PracticeController {
           response = 'F';
       }
       else if (quest.type === 'selection') {
-        for (let cid = 0; cid < 4; ++cid)
-          if ((document.getElementById(`quest-${qid}-${cid}`) as HTMLInputElement).checked)
+        for (let cid = 0; cid < 4; ++cid) {
+          const dom = document.getElementById(`quest-${qid}-${cid}`) as HTMLInputElement;
+          if (dom && dom.checked)
             response = `${cid}`;
+        }
       }
       else if (quest.type === 'short') {
         response = (document.getElementById(`quest-${qid}-blank`) as HTMLInputElement).value;
