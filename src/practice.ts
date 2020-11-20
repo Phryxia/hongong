@@ -173,6 +173,11 @@ export class PracticeController {
     this.editor = editorComponent;
     this.view.deactivate();
 
+    // 문제풀기 버튼
+    document.getElementById('bt-problem-solving').onclick = () => {
+      this.createMocktest();
+    };
+
     // 채점버튼
     document.getElementById('bt-check').onclick = () => {
       this.check();

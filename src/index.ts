@@ -12,7 +12,7 @@ editorComponent.update();
 
 const practiceController = new PracticeController(editorComponent);
 
-const browserTreeController = new BrowserTreeController(dc, editorComponent, practiceController);
+const browserTreeController = new BrowserTreeController(dc, editorComponent);
 
 const emergency = false;
 if (emergency) {

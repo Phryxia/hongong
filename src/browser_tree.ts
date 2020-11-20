@@ -166,7 +166,7 @@ export class BrowserTreeController {
   private editor: EditorComponent;
   private view: BrowserTreeView;
 
-  public constructor(dc: DataCenter, editor: EditorComponent, practiceController: PracticeController) {
+  public constructor(dc: DataCenter, editor: EditorComponent) {
     this.dc = dc;
     this.editor = editor;
     this.view = new BrowserTreeView(dc, editor);
@@ -205,10 +205,6 @@ export class BrowserTreeController {
       this.view.open(node);
       this.view.update();
       this.dc.save();
-    };
-
-    document.getElementById('bt-problem-solving').onclick = () => {
-      practiceController.createMocktest();
     };
 
     document.getElementById('bt-delete-current').onclick = () => {
