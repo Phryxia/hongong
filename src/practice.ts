@@ -2,6 +2,8 @@ import Parser from './hongong/parser';
 import Mocktest from './hongong/mocktest';
 import Quest from './hongong/quest';
 import { EditorComponent } from './editor';
+import { DataCenter, FileSystemNode, FolderNode, NoteNode } from './datacenter';
+import Info from './hongong/info';
 
 class PracticeView {
   private dom: HTMLElement = document.getElementById('practice');
@@ -166,10 +168,12 @@ class PracticeView {
 
 export class PracticeController {
   private view: PracticeView = new PracticeView();
+  private dc: DataCenter;
   private editor: EditorComponent;
   private mocktest: Mocktest = null;
 
-  public constructor(editorComponent: EditorComponent) {
+  public constructor(dc: DataCenter, editorComponent: EditorComponent) {
+    this.dc = dc;
     this.editor = editorComponent;
     this.view.deactivate();
 
@@ -185,16 +189,39 @@ export class PracticeController {
   }
 
   public createMocktest(): void {
-    const markdown = this.editor.toMarkdown();
-    if (!markdown)
-      return;
-    
-    const infotree = Parser.parse(markdown);
-    
-    this.mocktest = Mocktest.create_mocktest(infotree.roots[0], 16);
-
+    const currentNode = this.dc.getCurrentNode();
+    const root = this.joinInfoTree(currentNode);
+    this.mocktest = Mocktest.create_mocktest(root, 16);
     this.view.mocktest = this.mocktest;
     this.view.activate();
+  }
+
+  private joinInfoTree(fsnode: FileSystemNode) {
+    if (!fsnode)
+      return null;
+    
+    if (fsnode.isFolder) {
+      const out = new Info([fsnode.name], []);
+      
+      (fsnode as FolderNode).children.forEach(child => {
+        const cnode = this.joinInfoTree(child);
+        
+        // connect
+        if (cnode) {
+          out.childs.push(cnode);
+          cnode.parent = out;
+        }
+      });
+
+      return out;
+    }
+    else {
+      const markdown = (fsnode as NoteNode).content;
+      if (!markdown)
+        return null;
+
+      return Parser.parse(markdown).roots[0];
+    }
   }
 
   // 채점해서 뷰에 결과를 뷰로 발송한다.

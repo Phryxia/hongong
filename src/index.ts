@@ -10,7 +10,7 @@ const dc = new DataCenter;
 const editorComponent = new EditorComponent(dc);
 editorComponent.update();
 
-const practiceController = new PracticeController(editorComponent);
+const practiceController = new PracticeController(dc, editorComponent);
 
 const browserTreeController = new BrowserTreeController(dc, editorComponent);
 
